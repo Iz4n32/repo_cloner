@@ -33,19 +33,14 @@ while read -r line; do
 	DEBNAME=$(basename ${WITHOUT_FILENAME})
 	FULL_URL=$URL_DEB_REPO/$WITHOUT_FILENAME
 	
-	mkdir -p $FOLDER
-	cd $FOLDER
+	mkdir -p $FOLDER && cd $FOLDER
 	
 	# DOWNLOAD ONLY IF DONT EXIST!
 	[ ! -f $DEBNAME ] && wget $FULL_URL
-	
 	cd - >/dev/null 2<&1
 	
 done < Packages_filenames.txt
 
 echo "[INFO] The End."
 exit 0
-
-
-
 
