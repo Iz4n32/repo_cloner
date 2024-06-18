@@ -15,6 +15,18 @@ else
 	ARCH=$2	
 fi
 
+# 0 FTP Main resources => ALL EXCEPT <pool> FOLDER
+[ ! -d ./debian ] && mkdir -p ./debian
+wget --recursive --no-parent https://ftp.debian.org/debian/dists/bookworm/
+wget --recursive --no-parent https://ftp.debian.org/debian/dists/bookworm-updates/
+wget --recursive --no-parent https://ftp.debian.org/debian/doc/
+wget --recursive --no-parent https://ftp.debian.org/debian/indices/
+wget --recursive --no-parent https://ftp.debian.org/debian/project/
+wget --recursive --no-parent https://ftp.debian.org/debian/tools/
+wget --recursive --no-parent https://ftp.debian.org/debian/zzz-dists/
+mv ./ftp.debian.org/debian/* ./debian/
+rm -rf ./ftp.debian.org
+
 # 1 - Obtain the Packages file for this config
 PACKAGES_GZ=$URL_DEB_REPO"/dists/$VERSION/main/binary-$ARCH/Packages.gz"
 [ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
