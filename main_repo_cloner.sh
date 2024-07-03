@@ -2,17 +2,37 @@
 clear
 
 URL_DEB_REPO=https://ftp.debian.org/debian
+URL_UBU_REPO=http://es.archive.ubuntu.com/ubuntu/
+
+URL_REPO=""
 VERSION=""
 ARCH=""
 
 # Check parameters
 if [ "$#" -ne 2 ]; then
-	echo "USAGE: $0 <version> <arch>"
-	echo "       $0 bookworm armhf"
+	printf "usage: $0 <ARCHITECTURE> <VERSION>\n"
+	#echo "       $0 bookworm armhf"
+	printf "\n  ARCHITECTURE can be:\n\t-amd64\n\t-arm64\n\t-armel\n\t-armhf\
+		\n\t-i386\n\t-mips64el\n\t-mipsel\n\t-ppc64el\n\t-s390x\n"
+	printf "\n  DEBIAN VERSION can be:\n\t-bookworm\n\t-bullseye\n\t-buster\n\t-trixie\n"
+	printf "\n  UBUNTU VERSION can be:\n\t-bionic\n\t-focal\n\t-jammy\n\t-lunar\
+		\n\t-mantic\n\t-noble\n\t-oracular\n\t-trusty\n\t-xenial\n"
 	exit 1
 else
-	VERSION=$1
-	ARCH=$2	
+	if [ "$2" = "bookworm" ] || [ "$2" = "bullseye" ] || [ "$2" = "buster" ] ||\
+	   [ "$2" = "trixie" ]; then
+		URL_REPO=$URL_DEB_REPO
+	elif [ "$2" = "bionic" ] || [ "$2" = "focal" ] || [ "$2" = "jammy" ] ||\
+	     [ "$2" = "lunar" ] || [ "$2" = "mantic" ] || [ "$2" = "noble" ] ||\
+	     [ "$2" = "oracular" ] || [ "$2" = "trusty" ] || [ "$2" = "xenial" ]; then
+		URL_REPO=$URL_UBU_REPO
+	else
+		echo "[ERROR] Version not found."
+		exit 2
+	fi
+
+	ARCH=$1
+	VERSION=$2
 fi
 
 # 0 FTP Main resources => ALL EXCEPT <pool> FOLDER
