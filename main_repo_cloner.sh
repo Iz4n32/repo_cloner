@@ -46,8 +46,8 @@ wget --recursive --no-parent $URL_REPO/indices/
 wget --recursive --no-parent $URL_REPO/project/
 #wget --recursive --no-parent $URL_REPO/tools/
 #wget --recursive --no-parent $URL_REPO/zzz-dists/
-[ -d ./ftp.debian.org ] mv ./ftp.debian.org/debian/* ./$VERSION\_$ARCH/debian/ && rm -rf ./ftp.debian.org
-[ -d ./es.archive.ubuntu.com ] mv ./es.archive.ubuntu.com/ubuntu/* ./$VERSION\_$ARCH/ubuntu/ && rm -rf ./es.archive.ubuntu.com
+[ -d ./ftp.debian.org ] && mv ./ftp.debian.org/debian/* ./$VERSION\_$ARCH/debian/ && rm -rf ./ftp.debian.org
+[ -d ./es.archive.ubuntu.com ] && mv ./es.archive.ubuntu.com/ubuntu/* ./$VERSION\_$ARCH/ubuntu/ && rm -rf ./es.archive.ubuntu.com
 
 
 # 1 - Obtain the Packages file for this config
