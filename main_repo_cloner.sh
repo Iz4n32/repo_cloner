@@ -51,7 +51,7 @@ wget --recursive --no-parent $URL_REPO/project/
 
 
 # 1 - Obtain the Packages file for this config
-PACKAGES_GZ=$URL_DEB_REPO"/dists/$VERSION/main/binary-$ARCH/Packages.gz"
+PACKAGES_GZ=$URL_REPO"/dists/$VERSION/main/binary-$ARCH/Packages.gz"
 [ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
 gzip -d Packages.gz
 
@@ -66,7 +66,7 @@ while read -r line; do
 	WITHOUT_FILENAME=$(echo $line | sed 's/Filename: //')
 	FOLDER="${WITHOUT_FILENAME%/*}"
 	DEBNAME=$(basename ${WITHOUT_FILENAME})
-	FULL_URL=$URL_DEB_REPO/$WITHOUT_FILENAME
+	FULL_URL=$URL_REPO/$WITHOUT_FILENAME
 	
 	mkdir -p $FOLDER && cd $FOLDER
 	
