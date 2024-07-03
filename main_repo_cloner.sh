@@ -19,33 +19,36 @@ if [ "$#" -ne 2 ]; then
 		\n\t-mantic\n\t-noble\n\t-oracular\n\t-trusty\n\t-xenial\n"
 	exit 1
 else
+	ARCH=$1
+	VERSION=$2
+
 	if [ "$2" = "bookworm" ] || [ "$2" = "bullseye" ] || [ "$2" = "buster" ] ||\
 	   [ "$2" = "trixie" ]; then
 		URL_REPO=$URL_DEB_REPO
+		[ ! -d ./$VERSION\_$ARCH/debian ] && mkdir -p ./$VERSION\_$ARCH/debian
 	elif [ "$2" = "bionic" ] || [ "$2" = "focal" ] || [ "$2" = "jammy" ] ||\
 	     [ "$2" = "lunar" ] || [ "$2" = "mantic" ] || [ "$2" = "noble" ] ||\
 	     [ "$2" = "oracular" ] || [ "$2" = "trusty" ] || [ "$2" = "xenial" ]; then
 		URL_REPO=$URL_UBU_REPO
+		[ ! -d ./$VERSION\_$ARCH/ubuntu ] && mkdir -p ./$VERSION\_$ARCH/ubuntu
 	else
 		echo "[ERROR] Version not found."
 		exit 2
 	fi
-
-	ARCH=$1
-	VERSION=$2
 fi
 
+
 # 0 FTP Main resources => ALL EXCEPT <pool> FOLDER
-[ ! -d ./debian ] && mkdir -p ./debian
-wget --recursive --no-parent https://ftp.debian.org/debian/dists/bookworm/
-wget --recursive --no-parent https://ftp.debian.org/debian/dists/bookworm-updates/
-wget --recursive --no-parent https://ftp.debian.org/debian/doc/
-wget --recursive --no-parent https://ftp.debian.org/debian/indices/
-wget --recursive --no-parent https://ftp.debian.org/debian/project/
-wget --recursive --no-parent https://ftp.debian.org/debian/tools/
-wget --recursive --no-parent https://ftp.debian.org/debian/zzz-dists/
-mv ./ftp.debian.org/debian/* ./debian/
-rm -rf ./ftp.debian.org
+wget --recursive --no-parent $URL_REPO/dists/$VERSION/
+wget --recursive --no-parent $URL_REPO/dists/$VERSION-updates/
+#wget --recursive --no-parent $URL_REPO/doc/
+wget --recursive --no-parent $URL_REPO/indices/
+wget --recursive --no-parent $URL_REPO/project/
+#wget --recursive --no-parent $URL_REPO/tools/
+#wget --recursive --no-parent $URL_REPO/zzz-dists/
+[ -d ./ftp.debian.org ] mv ./ftp.debian.org/debian/* ./$VERSION\_$ARCH/debian/ && rm -rf ./ftp.debian.org
+[ -d ./es.archive.ubuntu.com ] mv ./es.archive.ubuntu.com/ubuntu/* ./$VERSION\_$ARCH/ubuntu/ && rm -rf ./es.archive.ubuntu.com
+
 
 # 1 - Obtain the Packages file for this config
 PACKAGES_GZ=$URL_DEB_REPO"/dists/$VERSION/main/binary-$ARCH/Packages.gz"
