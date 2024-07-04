@@ -59,7 +59,13 @@ gzip -d Packages.gz
 cat Packages | grep "Filename:" > Packages_filenames.txt
 
 # 3 - mkdir dest folder
-mkdir -p ./pool/main
+if [ "$URL_REPO" = "$URL_DEB_REPO" ]; then
+	mkdir -p ./$VERSION\_$ARCH/debian/pool/main
+	ln -s ./$VERSION\_$ARCH/debian/pool pool
+elif [ "$URL_REPO" = "$URL_UBU_REPO" ];then
+	mkdir -p ./$VERSION\_$ARCH/ubuntu/pool/main
+	ln -s ./$VERSION\_$ARCH/ubuntu/pool pool
+fi
 
 # 4 - Get folder structure and download Packages
 while read -r line; do
@@ -73,8 +79,10 @@ while read -r line; do
 	# DOWNLOAD ONLY IF DONT EXIST!
 	[ ! -f $DEBNAME ] && wget $FULL_URL
 	cd - >/dev/null 2<&1
-	
+
 done < Packages_filenames.txt
+
+rm -rf pool Packages_filenames.txt Packages
 
 echo "[INFO] The End."
 exit 0
