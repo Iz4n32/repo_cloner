@@ -2,6 +2,7 @@
 clear
 
 URL_DEB_REPO=https://ftp.debian.org/debian
+URL_DEB_ARCHI=http://archive.debian.org/debian
 URL_UBU_REPO=http://es.archive.ubuntu.com/ubuntu/
 URL_UBU_PORTS=http://ports.ubuntu.com/
 URL_REPO=""
@@ -16,8 +17,9 @@ CLONE_DIR=$3
 if [ "$#" -ne 3 ]; then
 	printf "usage: $0 <ARCHITECTURE> <VERSION> <CLONE_DIRECTORY>\n"
 	printf "\n  ARCHITECTURE can be:\n\tamd64\n\tarm64\n\tarmel\n\tarmhf\
-		\n\ti386\n\tmips64el\n\tmipsel\n\tppc64el\n\ts390x\n"
-	printf "\n  DEBIAN VERSION can be:\n\tbookworm\n\tbullseye\n\tbuster\n\ttrixie\n"
+		\n\ti386\n\tmips64el\n\tmipsel\n\tppc64el\n\ts390x\n\tpowerpc\n"
+	printf "\n  DEBIAN VERSION can be:\n\tbookworm\n\tbullseye\n\tbuster\n\ttrixie\
+		\n\tjessie\n\twheezy\n\tsqueeze\n\tlenny\n"
 	printf "\n  UBUNTU VERSION can be:\n\tbionic\n\tfocal\n\tjammy\n\tlunar\
 		\n\tmantic\n\tnoble\n\toracular\n\ttrusty\n\txenial\n"
 	exit 1
@@ -43,6 +45,16 @@ if [ "$VERSION" = "bookworm" ] || [ "$VERSION" = "bullseye" ] || [ "$VERSION" = 
 	URL_REPO=$URL_DEB_REPO
 	[ ! -d $CLONE_DIR/ftp.debian.org ] && mkdir -p $CLONE_DIR/ftp.debian.org
 	[ ! -e ./ftp.debian.org ] && ln -s $CLONE_DIR/ftp.debian.org ./ftp.debian.org
+	[ ! -d $CLONE_DIR/$VERSION\_$ARCH/debian ] && mkdir -p $CLONE_DIR/$VERSION\_$ARCH/debian
+	[ ! -e ./debian ] && ln -s $CLONE_DIR/$VERSION\_$ARCH/debian ./debian
+
+# DEBIAN ARCHIVE
+elif [ "$VERSION" = "lenny" ] || [ "$VERSION" = "squeeze" ] || [ "$VERSION" = "wheezy" ] ||\
+     [ "$VERSION" = "jessie" ]; then
+
+	URL_REPO=$URL_DEB_ARCHI
+	[ ! -d $CLONE_DIR/archive.debian.org ] && mkdir -p $CLONE_DIR/archive.debian.org
+	[ ! -e ./archive.debian.org ] && ln -s $CLONE_DIR/archive.debian.org ./archive.debian.org
 	[ ! -d $CLONE_DIR/$VERSION\_$ARCH/debian ] && mkdir -p $CLONE_DIR/$VERSION\_$ARCH/debian
 	[ ! -e ./debian ] && ln -s $CLONE_DIR/$VERSION\_$ARCH/debian ./debian
 
@@ -89,6 +101,7 @@ wget --recursive --no-parent $URL_REPO/project/
 #wget --recursive --no-parent $URL_REPO/tools/
 #wget --recursive --no-parent $URL_REPO/zzz-dists/
 [ -e ./ftp.debian.org ] && mv ./ftp.debian.org/debian/* ./debian/ && rm -rf ./ftp.debian.org && rm -rf $CLONE_DIR/ftp.debian.org
+[ -e ./archive.debian.org ] && mv ./archive.debian.org/debian/* ./debian/ && rm -rf ./archive.debian.org && rm -rf $CLONE_DIR/archive.debian.org
 [ -e ./es.archive.ubuntu.com ] && mv ./es.archive.ubuntu.com/ubuntu/* ./ubuntu/ && rm -rf ./es.archive.ubuntu.com && rm -rf $CLONE_DIR/es.archive.ubuntu.com
 [ -e ./ports.ubuntu.com ] && mv ./ports.ubuntu.com/* ./ubuntuP/ && rm -rf ./ports.ubuntu.com && rm -rf $CLONE_DIR/ports.ubuntu.com
 
