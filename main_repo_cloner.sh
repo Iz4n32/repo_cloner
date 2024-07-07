@@ -31,12 +31,6 @@ fi
 if [ "$VERSION" = "bookworm" ] || [ "$VERSION" = "bullseye" ] || [ "$VERSION" = "buster" ] ||\
    [ "$VERSION" = "trixie" ]; then
 
-	URL_REPO=$URL_DEB_REPO
-	[ ! -d $CLONE_DIR/ftp.debian.org ] && mkdir -p $CLONE_DIR/ftp.debian.org
-	[ ! -e ./ftp.debian.org ] && ln -s $CLONE_DIR/ftp.debian.org ./ftp.debian.org
-	[ ! -d $CLONE_DIR/$VERSION\_$ARCH/debian ] && mkdir -p $CLONE_DIR/$VERSION\_$ARCH/debian
-	[ ! -e ./debian ] && ln -s $CLONE_DIR/$VERSION\_$ARCH/debian ./debian
-
 	if [ "$ARCH" != "amd64" ] &&\
 	   [ "$ARCH" != "arm64" ] && [ "$ARCH" != "armel" ] &&\
 	   [ "$ARCH" != "armhf" ] && [ "$ARCH" != "i386" ] &&\
@@ -45,6 +39,12 @@ if [ "$VERSION" = "bookworm" ] || [ "$VERSION" = "bullseye" ] || [ "$VERSION" = 
 		echo "[ERROR] arch:$ARCH is not available in DEBIAN $VERSION"
 		exit 2
 	fi
+
+	URL_REPO=$URL_DEB_REPO
+	[ ! -d $CLONE_DIR/ftp.debian.org ] && mkdir -p $CLONE_DIR/ftp.debian.org
+	[ ! -e ./ftp.debian.org ] && ln -s $CLONE_DIR/ftp.debian.org ./ftp.debian.org
+	[ ! -d $CLONE_DIR/$VERSION\_$ARCH/debian ] && mkdir -p $CLONE_DIR/$VERSION\_$ARCH/debian
+	[ ! -e ./debian ] && ln -s $CLONE_DIR/$VERSION\_$ARCH/debian ./debian
 
 # UBUNTU
 elif [ "$VERSION" = "bionic" ] || [ "$VERSION" = "focal" ] || [ "$VERSION" = "jammy" ] ||\
