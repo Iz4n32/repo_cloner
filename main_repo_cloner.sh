@@ -3,6 +3,7 @@ clear
 
 URL_DEB_REPO=https://ftp.debian.org/debian
 URL_UBU_REPO=http://es.archive.ubuntu.com/ubuntu/
+URL_UBU_PORTS=http://ports.ubuntu.com/
 URL_REPO=""
 
 ARCH=$1
@@ -25,28 +26,45 @@ fi
 #################################################
 # 2 Identify VERSION Debian / Ubuntu && do Folders & Links
 #################################################
+
+# DEBIAN
 if [ "$2" = "bookworm" ] || [ "$2" = "bullseye" ] || [ "$2" = "buster" ] ||\
    [ "$2" = "trixie" ]; then
 
-	# It's DEBIAN
 	URL_REPO=$URL_DEB_REPO
 	[ ! -d $CLONE_DIR/ftp.debian.org ] && mkdir -p $CLONE_DIR/ftp.debian.org
 	[ ! -e ./ftp.debian.org ] && ln -s $CLONE_DIR/ftp.debian.org ./ftp.debian.org
 	[ ! -d $CLONE_DIR/$VERSION\_$ARCH/debian ] && mkdir -p $CLONE_DIR/$VERSION\_$ARCH/debian
 	[ ! -e ./debian ] && ln -s $CLONE_DIR/$VERSION\_$ARCH/debian ./debian
 
+# UBUNTU
 elif [ "$2" = "bionic" ] || [ "$2" = "focal" ] || [ "$2" = "jammy" ] ||\
      [ "$2" = "lunar" ] || [ "$2" = "mantic" ] || [ "$2" = "noble" ] ||\
      [ "$2" = "oracular" ] || [ "$2" = "trusty" ] || [ "$2" = "xenial" ]; then
 
-	# It's UBUNTU
-	URL_REPO=$URL_UBU_REPO
-	[ ! -d $CLONE_DIR/es.archive.ubuntu.com ] && mkdir -p $CLONE_DIR/es.archive.ubuntu.com
-	[ ! -e ./es.archive.ubuntu.com ] && ln -s $CLONE_DIR/es.archive.ubuntu.com ./es.archive.ubuntu.com
-	[ ! -d $CLONE_DIR/$VERSION\_$ARCH/ubuntu ] && mkdir -p $CLONE_DIR/$VERSION\_$ARCH/ubuntu
-	[ ! -e ./ubuntu ] && ln -s $CLONE_DIR/$VERSION\_$ARCH/ubuntu ./ubuntu
+	if [ "$ARCH" = "amd64" ] || [ "$ARCH" = "i386" ]; then
+
+		# UBUNTU from <archive.ubuntu.com>
+		URL_REPO=$URL_UBU_REPO
+		[ ! -d $CLONE_DIR/es.archive.ubuntu.com ] && mkdir -p $CLONE_DIR/es.archive.ubuntu.com
+		[ ! -e ./es.archive.ubuntu.com ] && ln -s $CLONE_DIR/es.archive.ubuntu.com ./es.archive.ubuntu.com
+		[ ! -d $CLONE_DIR/$VERSION\_$ARCH/ubuntu ] && mkdir -p $CLONE_DIR/$VERSION\_$ARCH/ubuntu
+		[ ! -e ./ubuntu ] && ln -s $CLONE_DIR/$VERSION\_$ARCH/ubuntu ./ubuntu
+
+	elif [ "$ARCH" = "arm64" ] || [ "$ARCH" = "armhf" ] ||\
+	     [ "$ARCH" = "ppc64el" ] || [ "$ARCH" = "s390x" ]; then
+
+		# UBUNTU from <ports.ubuntu.com>
+		URL_REPO=$URL_UBU_PORTS
+		[ ! -d $CLONE_DIR/ports.ubuntu.com ] && mkdir -p $CLONE_DIR/ports.ubuntu.com
+		[ ! -e ./ports.ubuntu.com ] && ln -s $CLONE_DIR/ports.ubuntu.com ./ports.ubuntu.com
+		[ ! -d $CLONE_DIR/$VERSION\_$ARCH ] && mkdir -p $CLONE_DIR/$VERSION\_$ARCH
+		[ ! -e ./ubuntuP ] && ln -s $CLONE_DIR/$VERSION\_$ARCH ./ubuntuP
+	else
+		echo "[ERROR] arch:$ARCH is not available in UBUNTU $VERSION"
+		exit 2
+	fi
 else
-	# Unrecognized ver => EXIT
 	echo "[ERROR] Version not found."
 	exit 2
 fi
@@ -63,6 +81,7 @@ wget --recursive --no-parent $URL_REPO/project/
 #wget --recursive --no-parent $URL_REPO/zzz-dists/
 [ -e ./ftp.debian.org ] && mv ./ftp.debian.org/debian/* ./debian/ && rm -rf ./ftp.debian.org && rm -rf $CLONE_DIR/ftp.debian.org
 [ -e ./es.archive.ubuntu.com ] && mv ./es.archive.ubuntu.com/ubuntu/* ./ubuntu/ && rm -rf ./es.archive.ubuntu.com && rm -rf $CLONE_DIR/es.archive.ubuntu.com
+[ -e ./ports.ubuntu.com ] && mv ./ports.ubuntu.com/* ./ubuntuP/ && rm -rf ./ports.ubuntu.com && rm -rf $CLONE_DIR/ports.ubuntu.com
 
 #################################################
 # 4 - Obtain the Packages file for this config
@@ -81,6 +100,9 @@ if [ "$URL_REPO" = "$URL_DEB_REPO" ]; then
 elif [ "$URL_REPO" = "$URL_UBU_REPO" ];then
 	mkdir -p ./ubuntu/pool/main
 	ln -s ./ubuntu/pool pool
+elif [ "$URL_REPO" = "$URL_UBU_PORTS" ];then
+	mkdir -p ./ubuntuP/pool/main
+	ln -s ./ubuntuP/pool pool
 fi
 
 #################################################
