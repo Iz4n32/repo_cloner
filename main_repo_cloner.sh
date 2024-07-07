@@ -7,10 +7,11 @@ URL_UBU_REPO=http://es.archive.ubuntu.com/ubuntu/
 URL_REPO=""
 VERSION=""
 ARCH=""
+CLONE_DIR="./"
 
 # Check parameters
-if [ "$#" -ne 2 ]; then
-	printf "usage: $0 <ARCHITECTURE> <VERSION>\n"
+if [ "$#" -ne 3 ]; then
+	printf "usage: $0 <ARCHITECTURE> <VERSION> <CLONE_DIRECTORY>\n"
 	#echo "       $0 bookworm armhf"
 	printf "\n  ARCHITECTURE can be:\n\t-amd64\n\t-arm64\n\t-armel\n\t-armhf\
 		\n\t-i386\n\t-mips64el\n\t-mipsel\n\t-ppc64el\n\t-s390x\n"
@@ -21,16 +22,28 @@ if [ "$#" -ne 2 ]; then
 else
 	ARCH=$1
 	VERSION=$2
+	CLONE_DIR=$3
 
 	if [ "$2" = "bookworm" ] || [ "$2" = "bullseye" ] || [ "$2" = "buster" ] ||\
 	   [ "$2" = "trixie" ]; then
+
+		# It's DEBIAN
 		URL_REPO=$URL_DEB_REPO
-		[ ! -d ./$VERSION\_$ARCH/debian ] && mkdir -p ./$VERSION\_$ARCH/debian
+		[ ! -d $CLONE_DIR/ftp.debian.org ] && mkdir -p $CLONE_DIR/ftp.debian.org
+		[ ! -e ./ftp.debian.org ] && ln -s $CLONE_DIR/ftp.debian.org ./ftp.debian.org
+		[ ! -d $CLONE_DIR/$VERSION\_$ARCH/debian ] && mkdir -p $CLONE_DIR/$VERSION\_$ARCH/debian
+		[ ! -e ./debian ] && ln -s $CLONE_DIR/$VERSION\_$ARCH/debian ./debian
+
 	elif [ "$2" = "bionic" ] || [ "$2" = "focal" ] || [ "$2" = "jammy" ] ||\
 	     [ "$2" = "lunar" ] || [ "$2" = "mantic" ] || [ "$2" = "noble" ] ||\
 	     [ "$2" = "oracular" ] || [ "$2" = "trusty" ] || [ "$2" = "xenial" ]; then
+
+		# It's UBUNTU
 		URL_REPO=$URL_UBU_REPO
-		[ ! -d ./$VERSION\_$ARCH/ubuntu ] && mkdir -p ./$VERSION\_$ARCH/ubuntu
+		[ ! -d $CLONE_DIR/es.archive.ubuntu.com ] && mkdir -p $CLONE_DIR/es.archive.ubuntu.com
+		[ ! -e ./es.archive.ubuntu.com ] && ln -s $CLONE_DIR/es.archive.ubuntu.com ./es.archive.ubuntu.com
+		[ ! -d $CLONE_DIR/$VERSION\_$ARCH/ubuntu ] && mkdir -p $CLONE_DIR/$VERSION\_$ARCH/ubuntu
+		[ ! -e ./ubuntu ] && ln -s $CLONE_DIR/$VERSION\_$ARCH/ubuntu ./ubuntu
 	else
 		echo "[ERROR] Version not found."
 		exit 2
@@ -46,8 +59,8 @@ wget --recursive --no-parent $URL_REPO/indices/
 wget --recursive --no-parent $URL_REPO/project/
 #wget --recursive --no-parent $URL_REPO/tools/
 #wget --recursive --no-parent $URL_REPO/zzz-dists/
-[ -d ./ftp.debian.org ] && mv ./ftp.debian.org/debian/* ./$VERSION\_$ARCH/debian/ && rm -rf ./ftp.debian.org
-[ -d ./es.archive.ubuntu.com ] && mv ./es.archive.ubuntu.com/ubuntu/* ./$VERSION\_$ARCH/ubuntu/ && rm -rf ./es.archive.ubuntu.com
+[ -e ./ftp.debian.org ] && mv ./ftp.debian.org/debian/* ./debian/ && rm -rf ./ftp.debian.org && rm -rf $CLONE_DIR/ftp.debian.org
+[ -e ./es.archive.ubuntu.com ] && mv ./es.archive.ubuntu.com/ubuntu/* ./ubuntu/ && rm -rf ./es.archive.ubuntu.com && rm -rf $CLONE_DIR/es.archive.ubuntu.com
 
 
 # 1 - Obtain the Packages file for this config
@@ -60,11 +73,11 @@ cat Packages | grep "Filename:" > Packages_filenames.txt
 
 # 3 - mkdir dest folder
 if [ "$URL_REPO" = "$URL_DEB_REPO" ]; then
-	mkdir -p ./$VERSION\_$ARCH/debian/pool/main
-	ln -s ./$VERSION\_$ARCH/debian/pool pool
+	mkdir -p ./debian/pool/main
+	ln -s ./debian/pool pool
 elif [ "$URL_REPO" = "$URL_UBU_REPO" ];then
-	mkdir -p ./$VERSION\_$ARCH/ubuntu/pool/main
-	ln -s ./$VERSION\_$ARCH/ubuntu/pool pool
+	mkdir -p ./ubuntu/pool/main
+	ln -s ./ubuntu/pool pool
 fi
 
 # 4 - Get folder structure and download Packages
@@ -82,7 +95,10 @@ while read -r line; do
 
 done < Packages_filenames.txt
 
+# Clean-up Time!
 rm -rf pool Packages_filenames.txt Packages
+[ ! -e ./debian ] && rm -rf ./debian
+[ ! -e ./ubuntu ] && rm -rf ./ubuntu
 
 echo "[INFO] The End."
 exit 0
