@@ -37,6 +37,15 @@ if [ "$VERSION" = "bookworm" ] || [ "$VERSION" = "bullseye" ] || [ "$VERSION" = 
 	[ ! -d $CLONE_DIR/$VERSION\_$ARCH/debian ] && mkdir -p $CLONE_DIR/$VERSION\_$ARCH/debian
 	[ ! -e ./debian ] && ln -s $CLONE_DIR/$VERSION\_$ARCH/debian ./debian
 
+	if [ "$ARCH" != "amd64" ] &&\
+	   [ "$ARCH" != "arm64" ] && [ "$ARCH" != "armel" ] &&\
+	   [ "$ARCH" != "armhf" ] && [ "$ARCH" != "i386" ] &&\
+	   [ "$ARCH" != "mips64el" ] && [ "$ARCH" != "mipsel" ] &&\
+	   [ "$ARCH" != "ppc64el" ] && [ "$ARCH" != "s390x" ]; then
+		echo "[ERROR] arch:$ARCH is not available in DEBIAN $VERSION"
+		exit 2
+	fi
+
 # UBUNTU
 elif [ "$VERSION" = "bionic" ] || [ "$VERSION" = "focal" ] || [ "$VERSION" = "jammy" ] ||\
      [ "$VERSION" = "lunar" ] || [ "$VERSION" = "mantic" ] || [ "$VERSION" = "noble" ] ||\
