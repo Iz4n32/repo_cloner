@@ -96,9 +96,8 @@ while read -r line; do
 done < Packages_filenames.txt
 
 # Clean-up Time!
-rm -rf pool Packages_filenames.txt Packages
-[ ! -e ./debian ] && rm -rf ./debian
-[ ! -e ./ubuntu ] && rm -rf ./ubuntu
+rm -rf Packages_filenames.txt Packages
+find . -maxdepth 1 -type l -delete
 
 echo "[INFO] The End."
 exit 0
