@@ -28,8 +28,8 @@ fi
 #################################################
 
 # DEBIAN
-if [ "$2" = "bookworm" ] || [ "$2" = "bullseye" ] || [ "$2" = "buster" ] ||\
-   [ "$2" = "trixie" ]; then
+if [ "$VERSION" = "bookworm" ] || [ "$VERSION" = "bullseye" ] || [ "$VERSION" = "buster" ] ||\
+   [ "$VERSION" = "trixie" ]; then
 
 	URL_REPO=$URL_DEB_REPO
 	[ ! -d $CLONE_DIR/ftp.debian.org ] && mkdir -p $CLONE_DIR/ftp.debian.org
@@ -38,9 +38,9 @@ if [ "$2" = "bookworm" ] || [ "$2" = "bullseye" ] || [ "$2" = "buster" ] ||\
 	[ ! -e ./debian ] && ln -s $CLONE_DIR/$VERSION\_$ARCH/debian ./debian
 
 # UBUNTU
-elif [ "$2" = "bionic" ] || [ "$2" = "focal" ] || [ "$2" = "jammy" ] ||\
-     [ "$2" = "lunar" ] || [ "$2" = "mantic" ] || [ "$2" = "noble" ] ||\
-     [ "$2" = "oracular" ] || [ "$2" = "trusty" ] || [ "$2" = "xenial" ]; then
+elif [ "$VERSION" = "bionic" ] || [ "$VERSION" = "focal" ] || [ "$VERSION" = "jammy" ] ||\
+     [ "$VERSION" = "lunar" ] || [ "$VERSION" = "mantic" ] || [ "$VERSION" = "noble" ] ||\
+     [ "$VERSION" = "oracular" ] || [ "$VERSION" = "trusty" ] || [ "$VERSION" = "xenial" ]; then
 
 	if [ "$ARCH" = "amd64" ] || [ "$ARCH" = "i386" ]; then
 
