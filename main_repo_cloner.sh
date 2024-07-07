@@ -13,11 +13,11 @@ CLONE_DIR="./"
 if [ "$#" -ne 3 ]; then
 	printf "usage: $0 <ARCHITECTURE> <VERSION> <CLONE_DIRECTORY>\n"
 	#echo "       $0 bookworm armhf"
-	printf "\n  ARCHITECTURE can be:\n\t-amd64\n\t-arm64\n\t-armel\n\t-armhf\
-		\n\t-i386\n\t-mips64el\n\t-mipsel\n\t-ppc64el\n\t-s390x\n"
-	printf "\n  DEBIAN VERSION can be:\n\t-bookworm\n\t-bullseye\n\t-buster\n\t-trixie\n"
-	printf "\n  UBUNTU VERSION can be:\n\t-bionic\n\t-focal\n\t-jammy\n\t-lunar\
-		\n\t-mantic\n\t-noble\n\t-oracular\n\t-trusty\n\t-xenial\n"
+	printf "\n  ARCHITECTURE can be:\n\tamd64\n\tarm64\n\tarmel\n\tarmhf\
+		\n\ti386\n\tmips64el\n\tmipsel\n\tppc64el\n\ts390x\n"
+	printf "\n  DEBIAN VERSION can be:\n\tbookworm\n\tbullseye\n\tbuster\n\ttrixie\n"
+	printf "\n  UBUNTU VERSION can be:\n\tbionic\n\tfocal\n\tjammy\n\tlunar\
+		\n\tmantic\n\tnoble\n\toracular\n\ttrusty\n\txenial\n"
 	exit 1
 else
 	ARCH=$1
