@@ -11,6 +11,25 @@ ARCH=$1
 VERSION=$2
 CLONE_DIR=$3
 
+function download_Packages {
+
+	while read -r line; do
+		WITHOUT_FILENAME=$(echo $line | sed 's/Filename: //')
+		FOLDER="${WITHOUT_FILENAME%/*}"
+		DEBNAME=$(basename ${WITHOUT_FILENAME})
+		FULL_URL=$URL_REPO/$WITHOUT_FILENAME
+
+		mkdir -p $FOLDER && cd $FOLDER
+
+		# DOWNLOAD ONLY IF DONT EXIST!
+		[ ! -f $DEBNAME ] && wget $FULL_URL
+		cd - >/dev/null 2<&1
+
+	done < Packages_filenames.txt
+
+	rm -rf Packages_filenames.txt Packages
+}
+
 #################################################
 # 1 Check parameters
 #################################################
@@ -106,15 +125,7 @@ wget --recursive --no-parent $URL_REPO/project/
 [ -e ./ports.ubuntu.com ] && mv ./ports.ubuntu.com/* ./ubuntuP/ && rm -rf ./ports.ubuntu.com && rm -rf $CLONE_DIR/ports.ubuntu.com
 
 #################################################
-# 4 - Obtain the Packages file for this config
-#################################################
-PACKAGES_GZ=$URL_REPO"/dists/$VERSION/main/binary-$ARCH/Packages.gz"
-[ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
-gzip -d Packages.gz
-cat Packages | grep "Filename:" > Packages_filenames.txt
-
-#################################################
-# 5 - mkdir dest folder
+# 4 - mkdir dest folder
 #################################################
 if [ "$URL_REPO" = "$URL_DEB_REPO" ]; then
 	mkdir -p ./debian/pool/main
@@ -128,26 +139,25 @@ elif [ "$URL_REPO" = "$URL_UBU_PORTS" ];then
 fi
 
 #################################################
-# 6 - Get folder structure and download Packages
+# 5 - Obtain the Packages files and download
 #################################################
-while read -r line; do
-	WITHOUT_FILENAME=$(echo $line | sed 's/Filename: //')
-	FOLDER="${WITHOUT_FILENAME%/*}"
-	DEBNAME=$(basename ${WITHOUT_FILENAME})
-	FULL_URL=$URL_REPO/$WITHOUT_FILENAME
-	
-	mkdir -p $FOLDER && cd $FOLDER
-	
-	# DOWNLOAD ONLY IF DONT EXIST!
-	[ ! -f $DEBNAME ] && wget $FULL_URL
-	cd - >/dev/null 2<&1
 
-done < Packages_filenames.txt
+# <version> Packages
+PACKAGES_GZ=$URL_REPO"/dists/$VERSION/main/binary-$ARCH/Packages.gz"
+[ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
+gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
+download_Packages
+
+# <version-updates> Packages
+PACKAGES_GZ=$URL_REPO"/dists/$VERSION-updates/main/binary-$ARCH/Packages.gz"
+[ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
+gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
+download_Packages
+
 
 #################################################
-# 7 Clean-up Time!
+# 6 Clean-up Time!
 #################################################
-rm -rf Packages_filenames.txt Packages
 find . -maxdepth 1 -type l -delete
 
 echo "[INFO] The End."
