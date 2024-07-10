@@ -11,6 +11,14 @@ ARCH=$1
 VERSION=$2
 CLONE_DIR=$3
 
+function make_directories {
+	mkdir -p ./$1/pool/main
+	mkdir -p ./$1/pool/multiverse
+	mkdir -p ./$1/pool/restricted
+	mkdir -p ./$1/pool/universe
+	ln -s ./$1/pool pool
+}
+
 function download_Packages {
 	VER=$1
 	POOL_SUBDIR=$2
@@ -139,23 +147,11 @@ wget --recursive --no-parent $URL_REPO/project/
 # 4 - mkdir dest folder
 #################################################
 if [ "$URL_REPO" = "$URL_DEB_REPO" ]; then
-	mkdir -p ./debian/pool/main
-	mkdir -p ./debian/pool/multiverse
-	mkdir -p ./debian/pool/restricted
-	mkdir -p ./debian/pool/universe
-	ln -s ./debian/pool pool
+	make_directories debian
 elif [ "$URL_REPO" = "$URL_UBU_REPO" ];then
-	mkdir -p ./ubuntu/pool/main
-	mkdir -p ./ubuntu/pool/multiverse
-	mkdir -p ./ubuntu/pool/restricted
-	mkdir -p ./ubuntu/pool/universe
-	ln -s ./ubuntu/pool pool
+	make_directories ubuntu
 elif [ "$URL_REPO" = "$URL_UBU_PORTS" ];then
-	mkdir -p ./ubuntuP/pool/main
-	mkdir -p ./ubuntuP/pool/multiverse
-	mkdir -p ./ubuntuP/pool/restricted
-	mkdir -p ./ubuntuP/pool/universe
-	ln -s ./ubuntuP/pool pool
+	make_directories ubuntuP
 fi
 
 #################################################
