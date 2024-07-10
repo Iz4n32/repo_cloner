@@ -128,6 +128,7 @@ fi
 #################################################
 wget --recursive --no-parent $URL_REPO/dists/$VERSION/
 wget --recursive --no-parent $URL_REPO/dists/$VERSION-updates/
+wget --recursive --no-parent $URL_REPO/dists/$VERSION-security/
 #wget --recursive --no-parent $URL_REPO/doc/
 wget --recursive --no-parent $URL_REPO/indices/
 wget --recursive --no-parent $URL_REPO/project/
