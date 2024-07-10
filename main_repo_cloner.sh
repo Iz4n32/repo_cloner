@@ -151,18 +151,53 @@ fi
 # 5 - Obtain the Packages files and download
 #################################################
 
-# <version> Packages
+# <version> Packages main
 PACKAGES_GZ=$URL_REPO"/dists/$VERSION/main/binary-$ARCH/Packages.gz"
 [ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
 gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
 download_Packages
 
-# <version-updates> Packages
+# <version> Packages multiverse
+PACKAGES_GZ=$URL_REPO"/dists/$VERSION/multiverse/binary-$ARCH/Packages.gz"
+[ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
+gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
+download_Packages
+
+# <version> Packages restricted
+PACKAGES_GZ=$URL_REPO"/dists/$VERSION/restricted/binary-$ARCH/Packages.gz"
+[ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
+gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
+download_Packages
+
+# <version> Packages universe
+PACKAGES_GZ=$URL_REPO"/dists/$VERSION/universe/binary-$ARCH/Packages.gz"
+[ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
+gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
+download_Packages
+
+# <version-updates> Packages main
 PACKAGES_GZ=$URL_REPO"/dists/$VERSION-updates/main/binary-$ARCH/Packages.gz"
 [ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
 gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
 download_Packages
 
+# <version-updates> Packages multiverse
+PACKAGES_GZ=$URL_REPO"/dists/$VERSION-updates/multiverse/binary-$ARCH/Packages.gz"
+[ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
+gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
+download_Packages
+
+# <version-updates> Packages restricted
+PACKAGES_GZ=$URL_REPO"/dists/$VERSION-updates/restricted/binary-$ARCH/Packages.gz"
+[ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
+gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
+download_Packages
+
+# <version-updates> Packages universe
+PACKAGES_GZ=$URL_REPO"/dists/$VERSION-updates/universe/binary-$ARCH/Packages.gz"
+[ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
+gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
+download_Packages
 
 #################################################
 # 6 Clean-up Time!
