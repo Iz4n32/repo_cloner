@@ -129,12 +129,21 @@ wget --recursive --no-parent $URL_REPO/project/
 #################################################
 if [ "$URL_REPO" = "$URL_DEB_REPO" ]; then
 	mkdir -p ./debian/pool/main
+	mkdir -p ./debian/pool/multiverse
+	mkdir -p ./debian/pool/restricted
+	mkdir -p ./debian/pool/universe
 	ln -s ./debian/pool pool
 elif [ "$URL_REPO" = "$URL_UBU_REPO" ];then
 	mkdir -p ./ubuntu/pool/main
+	mkdir -p ./ubuntu/pool/multiverse
+	mkdir -p ./ubuntu/pool/restricted
+	mkdir -p ./ubuntu/pool/universe
 	ln -s ./ubuntu/pool pool
 elif [ "$URL_REPO" = "$URL_UBU_PORTS" ];then
 	mkdir -p ./ubuntuP/pool/main
+	mkdir -p ./ubuntuP/pool/multiverse
+	mkdir -p ./ubuntuP/pool/restricted
+	mkdir -p ./ubuntuP/pool/universe
 	ln -s ./ubuntuP/pool pool
 fi
 
