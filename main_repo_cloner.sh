@@ -3,8 +3,8 @@ clear
 
 URL_DEB_REPO=https://ftp.debian.org/debian
 URL_DEB_ARCHI=http://archive.debian.org/debian
-URL_UBU_REPO=http://es.archive.ubuntu.com/ubuntu/
-URL_UBU_PORTS=http://ports.ubuntu.com/
+URL_UBU_REPO=http://es.archive.ubuntu.com/ubuntu
+URL_UBU_PORTS=http://ports.ubuntu.com
 URL_REPO=""
 
 ARCH=$1
@@ -12,6 +12,16 @@ VERSION=$2
 CLONE_DIR=$3
 
 function download_Packages {
+	VER=$1
+	POOL_SUBDIR=$2
+
+	# rm Packages files if exists
+	[ -f ./Packages ] && rm -rf Packages
+	[ -f ./Packages_filenames.txt ] && rm -rf Packages_filenames.txt
+
+	PACKAGES_GZ=$URL_REPO"/dists/$VER/$POOL_SUBDIR/binary-$ARCH/Packages.gz"
+	wget $PACKAGES_GZ
+	gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
 
 	while read -r line; do
 		WITHOUT_FILENAME=$(echo $line | sed 's/Filename: //')
@@ -19,7 +29,8 @@ function download_Packages {
 		DEBNAME=$(basename ${WITHOUT_FILENAME})
 		FULL_URL=$URL_REPO/$WITHOUT_FILENAME
 
-		mkdir -p $FOLDER && cd $FOLDER
+		[ ! -d "$FOLDER" ] && mkdir -p $FOLDER
+		cd $FOLDER
 
 		# DOWNLOAD ONLY IF DONT EXIST!
 		[ ! -f $DEBNAME ] && wget $FULL_URL
@@ -150,54 +161,14 @@ fi
 #################################################
 # 5 - Obtain the Packages files and download
 #################################################
-
-# <version> Packages main
-PACKAGES_GZ=$URL_REPO"/dists/$VERSION/main/binary-$ARCH/Packages.gz"
-[ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
-gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
-download_Packages
-
-# <version> Packages multiverse
-PACKAGES_GZ=$URL_REPO"/dists/$VERSION/multiverse/binary-$ARCH/Packages.gz"
-[ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
-gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
-download_Packages
-
-# <version> Packages restricted
-PACKAGES_GZ=$URL_REPO"/dists/$VERSION/restricted/binary-$ARCH/Packages.gz"
-[ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
-gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
-download_Packages
-
-# <version> Packages universe
-PACKAGES_GZ=$URL_REPO"/dists/$VERSION/universe/binary-$ARCH/Packages.gz"
-[ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
-gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
-download_Packages
-
-# <version-updates> Packages main
-PACKAGES_GZ=$URL_REPO"/dists/$VERSION-updates/main/binary-$ARCH/Packages.gz"
-[ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
-gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
-download_Packages
-
-# <version-updates> Packages multiverse
-PACKAGES_GZ=$URL_REPO"/dists/$VERSION-updates/multiverse/binary-$ARCH/Packages.gz"
-[ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
-gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
-download_Packages
-
-# <version-updates> Packages restricted
-PACKAGES_GZ=$URL_REPO"/dists/$VERSION-updates/restricted/binary-$ARCH/Packages.gz"
-[ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
-gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
-download_Packages
-
-# <version-updates> Packages universe
-PACKAGES_GZ=$URL_REPO"/dists/$VERSION-updates/universe/binary-$ARCH/Packages.gz"
-[ ! -f ./Packages.gz ] && wget $PACKAGES_GZ
-gzip -d Packages.gz && cat Packages | grep "Filename:" > Packages_filenames.txt
-download_Packages
+download_Packages $VERSION main
+download_Packages $VERSION multiverse
+download_Packages $VERSION restricted
+download_Packages $VERSION universe
+download_Packages $VERSION-updates main
+download_Packages $VERSION-updates multiverse
+download_Packages $VERSION-updates restricted
+download_Packages $VERSION-updates universe
 
 #################################################
 # 6 Clean-up Time!
