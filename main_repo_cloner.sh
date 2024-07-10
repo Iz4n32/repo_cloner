@@ -23,9 +23,7 @@ function download_Packages {
 	VER=$1
 	POOL_SUBDIR=$2
 
-	# rm Packages files if exists
-	[ -f ./Packages ] && rm -rf Packages
-	[ -f ./Packages_filenames.txt ] && rm -rf Packages_filenames.txt
+	[ -f ./Packages ] && rm -rf Packages_filenames.txt Packages
 
 	PACKAGES_GZ=$URL_REPO"/dists/$VER/$POOL_SUBDIR/binary-$ARCH/Packages.gz"
 	wget $PACKAGES_GZ
@@ -45,8 +43,6 @@ function download_Packages {
 		cd - >/dev/null 2<&1
 
 	done < Packages_filenames.txt
-
-	rm -rf Packages_filenames.txt Packages
 }
 
 #################################################
@@ -138,6 +134,7 @@ wget --recursive --no-parent $URL_REPO/indices/
 wget --recursive --no-parent $URL_REPO/project/
 #wget --recursive --no-parent $URL_REPO/tools/
 #wget --recursive --no-parent $URL_REPO/zzz-dists/
+
 [ -e ./ftp.debian.org ] && mv ./ftp.debian.org/debian/* ./debian/ && rm -rf ./ftp.debian.org && rm -rf $CLONE_DIR/ftp.debian.org
 [ -e ./archive.debian.org ] && mv ./archive.debian.org/debian/* ./debian/ && rm -rf ./archive.debian.org && rm -rf $CLONE_DIR/archive.debian.org
 [ -e ./es.archive.ubuntu.com ] && mv ./es.archive.ubuntu.com/ubuntu/* ./ubuntu/ && rm -rf ./es.archive.ubuntu.com && rm -rf $CLONE_DIR/es.archive.ubuntu.com
@@ -169,6 +166,7 @@ download_Packages $VERSION-updates universe
 #################################################
 # 6 Clean-up Time!
 #################################################
+rm -rf Packages_filenames.txt Packages
 find . -maxdepth 1 -type l -delete
 
 echo "[INFO] The End."
