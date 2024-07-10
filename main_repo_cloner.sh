@@ -50,8 +50,7 @@ function download_Packages {
 #################################################
 if [ "$#" -ne 3 ]; then
 	printf "usage: $0 <ARCHITECTURE> <VERSION> <CLONE_DIRECTORY>\n"
-	printf "\n  ARCHITECTURE can be:\n\tamd64\n\tarm64\n\tarmel\n\tarmhf\
-		\n\ti386\n\tmips64el\n\tmipsel\n\tppc64el\n\ts390x\n\tpowerpc\n"
+	printf "\n  ARCHITECTURE can be:\n\tamd64 arm64 armel armhf i386 mips64el mipsel ppc64el s390x powerpc\n"
 	printf "\n  DEBIAN VERSION can be:\n\tbookworm\n\tbullseye\n\tbuster\n\ttrixie\
 		\n\tjessie\n\twheezy\n\tsqueeze\n\tlenny\n"
 	printf "\n  UBUNTU VERSION can be:\n\tbionic\n\tfocal\n\tjammy\n\tlunar\
