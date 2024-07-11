@@ -1,0 +1,9 @@
+deb [arch=amd64 trusted=yes] file:/.../ubuntu/ VERSION main restricted universe multiverse
+deb [arch=amd64 trusted=yes] file:/.../ubuntu/ VERSION-updates main restricted universe multiverse
+
+#deb http://es.archive.ubuntu.com/ubuntu/ VERSION-backports main restricted universe multiverse
+
+#deb http://security.ubuntu.com/ubuntu VERSION-security main restricted
+#deb http://security.ubuntu.com/ubuntu VERSION-security universe
+#deb http://security.ubuntu.com/ubuntu VERSION-security multiverse
+
