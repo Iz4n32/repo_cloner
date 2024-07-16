@@ -2,14 +2,26 @@
 clear
 
 URL_DEB_REPO=https://ftp.debian.org/debian
+debian_versions=("bookworm" "bullseye" "buster" "trixie")
+debian_archs=("amd64" "arm64" "armel" "armhf" "i386" "mips64el" "mipsel" "ppc64el" "s390x")
+
 URL_DEB_ARCHI=http://archive.debian.org/debian
+debian_archive_versions=("lenny" "squeeze" "wheezy" "jessie")
+debian_archive_archs=("amd64" "armel" "armhf" "i386" "mips" "mipsel" "powerpc" "s390" "s390x" "sparc")
+
 URL_UBU_REPO=http://es.archive.ubuntu.com/ubuntu
+ubuntu_versions=("bionic" "focal" "jammy" "lunar" "mantic" "noble" "oracular" "trusty" "xenial")
+ubuntu_archs=("amd64" "i386")
+
 URL_UBU_PORTS=http://ports.ubuntu.com
+ubuntu_ports_archs=("arm64" "armhf" "ppc64el" "s390x")
+
 URL_REPO=""
 
 ARCH=$1
 VERSION=$2
 CLONE_DIR=$3
+
 
 function make_directories {
 	mkdir -p ./$1/pool/main
@@ -46,15 +58,16 @@ function download_Packages {
 }
 
 function check_if_array_contains {
+	ret=1
 	local array=("${!1}")
 	local target=$2
 
 	for string in "${array[@]}"; do
 		if [ "$string" == "$target" ]; then
-			return 0
+			ret=0 && break
 		fi
 	done
-	return 1
+	echo $ret
 }
 
 #################################################
@@ -75,17 +88,8 @@ fi
 #################################################
 
 # DEBIAN
-if [ "$VERSION" = "bookworm" ] || [ "$VERSION" = "bullseye" ] || [ "$VERSION" = "buster" ] ||\
-   [ "$VERSION" = "trixie" ]; then
-
-	if [ "$ARCH" != "amd64" ] &&\
-	   [ "$ARCH" != "arm64" ] && [ "$ARCH" != "armel" ] &&\
-	   [ "$ARCH" != "armhf" ] && [ "$ARCH" != "i386" ] &&\
-	   [ "$ARCH" != "mips64el" ] && [ "$ARCH" != "mipsel" ] &&\
-	   [ "$ARCH" != "ppc64el" ] && [ "$ARCH" != "s390x" ]; then
-		echo "[ERROR] arch:$ARCH is not available in DEBIAN $VERSION"
-		exit 2
-	fi
+if [ "$(check_if_array_contains debian_versions[@] "$VERSION")" == "0" ] &&\
+   [ "$(check_if_array_contains debian_archs[@] "$ARCH")" == "0" ]; then
 
 	URL_REPO=$URL_DEB_REPO
 	[ ! -d $CLONE_DIR/ftp.debian.org ] && mkdir -p $CLONE_DIR/ftp.debian.org
@@ -94,8 +98,8 @@ if [ "$VERSION" = "bookworm" ] || [ "$VERSION" = "bullseye" ] || [ "$VERSION" = 
 	[ ! -e ./debian ] && ln -s $CLONE_DIR/$VERSION\_$ARCH/debian ./debian
 
 # DEBIAN ARCHIVE
-elif [ "$VERSION" = "lenny" ] || [ "$VERSION" = "squeeze" ] || [ "$VERSION" = "wheezy" ] ||\
-     [ "$VERSION" = "jessie" ]; then
+elif [ "$(check_if_array_contains debian_archive_versions[@] "$VERSION")" == "0" ] &&\
+     [ "$(check_if_array_contains debian_archive_archs[@] "$ARCH")" == "0" ]; then
 
 	URL_REPO=$URL_DEB_ARCHI
 	[ ! -d $CLONE_DIR/archive.debian.org ] && mkdir -p $CLONE_DIR/archive.debian.org
@@ -104,34 +108,26 @@ elif [ "$VERSION" = "lenny" ] || [ "$VERSION" = "squeeze" ] || [ "$VERSION" = "w
 	[ ! -e ./debian ] && ln -s $CLONE_DIR/$VERSION\_$ARCH/debian ./debian
 
 # UBUNTU
-elif [ "$VERSION" = "bionic" ] || [ "$VERSION" = "focal" ] || [ "$VERSION" = "jammy" ] ||\
-     [ "$VERSION" = "lunar" ] || [ "$VERSION" = "mantic" ] || [ "$VERSION" = "noble" ] ||\
-     [ "$VERSION" = "oracular" ] || [ "$VERSION" = "trusty" ] || [ "$VERSION" = "xenial" ]; then
+elif [ "$(check_if_array_contains ubuntu_versions[@] "$VERSION")" == "0" ] &&\
+     [ "$(check_if_array_contains ubuntu_archs[@] "$ARCH")" == "0" ]; then
 
-	if [ "$ARCH" = "amd64" ] || [ "$ARCH" = "i386" ]; then
+	URL_REPO=$URL_UBU_REPO
+	[ ! -d $CLONE_DIR/es.archive.ubuntu.com ] && mkdir -p $CLONE_DIR/es.archive.ubuntu.com
+	[ ! -e ./es.archive.ubuntu.com ] && ln -s $CLONE_DIR/es.archive.ubuntu.com ./es.archive.ubuntu.com
+	[ ! -d $CLONE_DIR/$VERSION\_$ARCH/ubuntu ] && mkdir -p $CLONE_DIR/$VERSION\_$ARCH/ubuntu
+	[ ! -e ./ubuntu ] && ln -s $CLONE_DIR/$VERSION\_$ARCH/ubuntu ./ubuntu
 
-		# UBUNTU from <archive.ubuntu.com>
-		URL_REPO=$URL_UBU_REPO
-		[ ! -d $CLONE_DIR/es.archive.ubuntu.com ] && mkdir -p $CLONE_DIR/es.archive.ubuntu.com
-		[ ! -e ./es.archive.ubuntu.com ] && ln -s $CLONE_DIR/es.archive.ubuntu.com ./es.archive.ubuntu.com
-		[ ! -d $CLONE_DIR/$VERSION\_$ARCH/ubuntu ] && mkdir -p $CLONE_DIR/$VERSION\_$ARCH/ubuntu
-		[ ! -e ./ubuntu ] && ln -s $CLONE_DIR/$VERSION\_$ARCH/ubuntu ./ubuntu
+# UBUNTU ports
+elif [ "$(check_if_array_contains ubuntu_versions[@] "$VERSION")" == "0" ] &&\
+     [ "$(check_if_array_contains ubuntu_ports_archs[@] "$ARCH")" == "0" ]; then
 
-	elif [ "$ARCH" = "arm64" ] || [ "$ARCH" = "armhf" ] ||\
-	     [ "$ARCH" = "ppc64el" ] || [ "$ARCH" = "s390x" ]; then
-
-		# UBUNTU from <ports.ubuntu.com>
-		URL_REPO=$URL_UBU_PORTS
-		[ ! -d $CLONE_DIR/ports.ubuntu.com ] && mkdir -p $CLONE_DIR/ports.ubuntu.com
-		[ ! -e ./ports.ubuntu.com ] && ln -s $CLONE_DIR/ports.ubuntu.com ./ports.ubuntu.com
-		[ ! -d $CLONE_DIR/$VERSION\_$ARCH ] && mkdir -p $CLONE_DIR/$VERSION\_$ARCH
-		[ ! -e ./ubuntuP ] && ln -s $CLONE_DIR/$VERSION\_$ARCH ./ubuntuP
-	else
-		echo "[ERROR] arch:$ARCH is not available in UBUNTU $VERSION"
-		exit 2
-	fi
+	URL_REPO=$URL_UBU_PORTS
+	[ ! -d $CLONE_DIR/ports.ubuntu.com ] && mkdir -p $CLONE_DIR/ports.ubuntu.com
+	[ ! -e ./ports.ubuntu.com ] && ln -s $CLONE_DIR/ports.ubuntu.com ./ports.ubuntu.com
+	[ ! -d $CLONE_DIR/$VERSION\_$ARCH ] && mkdir -p $CLONE_DIR/$VERSION\_$ARCH
+	[ ! -e ./ubuntuP ] && ln -s $CLONE_DIR/$VERSION\_$ARCH ./ubuntuP
 else
-	echo "[ERROR] Version not found."
+	echo "[ERROR] arch:$ARCH or version:$VERSION not available."
 	exit 2
 fi
 
