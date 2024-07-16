@@ -45,6 +45,18 @@ function download_Packages {
 	done < Packages_filenames.txt
 }
 
+function check_if_array_contains {
+	local array=("${!1}")
+	local target=$2
+
+	for string in "${array[@]}"; do
+		if [ "$string" == "$target" ]; then
+			return 0
+		fi
+	done
+	return 1
+}
+
 #################################################
 # 1 Check parameters
 #################################################
