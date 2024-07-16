@@ -13,7 +13,7 @@ URL_UBU_REPO=http://es.archive.ubuntu.com/ubuntu
 ubuntu_versions=("bionic" "focal" "jammy" "lunar" "mantic" "noble" "oracular" "trusty" "xenial")
 ubuntu_archs=("amd64" "i386")
 
-URL_UBU_PORTS=http://ports.ubuntu.com
+URL_UBU_PORTS=http://ports.ubuntu.com/ubuntu-ports
 ubuntu_ports_archs=("arm64" "armhf" "ppc64el" "s390x")
 
 URL_REPO=""
